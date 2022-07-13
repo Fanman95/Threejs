@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
+                "OrbitControls": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.142.0/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.142.0/examples/jsm/controls/OrbitControls.js';
+        import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.142.0/examples/jsm/loaders/OBJLoader.js';
+
+        //setting
+        const scene = new THREE.Scene();
+        console.log(scene)
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+        console.log(camera)
+
+        camera.position.z = 10
+
+        const renderer = new THREE.WebGLRenderer()
+        console.log(renderer)
+
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setPixelRatio(devicePixelRatio)
+
+        document.body.appendChild(renderer.domElement)
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        const pointLight = new THREE.PointLight(0xffffff)
+        pointLight.position.set(0, 0, 0)
+
+        const lightHelper = new THREE.PointLightHelper(pointLight)
+        const gridHelper = new THREE.GridHelper(200.50)
+
+        scene.add(pointLight, lightHelper, gridHelper)
+
+        const controls = new OrbitControls(camera, renderer.domElement)
+
+        const axesHelper = new THREE.AxesHelper(10)
+        scene.add(axesHelper)
+
+        /*   const helper = new THREE.CameraHelper(camera)
+          scene.add(helper) */
+
+        //components
+        const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+
+        const sphereGeometry = new THREE.SphereGeometry(5, 64, 32)
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+
+        //client
+        let client = null
+
+        function createClient() {
+            // instantiate a loader
+            let loader = new OBJLoader();
+
+            // load a resource
+            loader.load(
+                // resource URL
+                './modal/Aircraft_obj.obj',
+                // called when resource is loaded
+                function (object) {
+                    client = object
+                    scene.add(object);
+                },
+                // called when loading is in progresses
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                // called when loading has errors
+                function (error) {
+                    console.log('An error happened');
+                }
+            );
+
+        }
+
+        createClient()
+
+        //https://www.solarsystemscope.com/textures/
+        //not on scale, but based on sequence
+        const earthRadiusScaleOfEarth = 1
+        const moonRadiusScaleOfEarth = 0.3
+        const sunRadiusScaleOfEarth = 3
+        const marsRadiusScaleOfEarth = 0.8
+        const neptuneRadiusScaleOfEarth = 1.3
+        const uranusRadiusScaleOfEarth = 1.3
+        const saturnRadiusScaleOfEarth = 1.5
+        const jupiterRadiusScaleOfEarth = 2
+        const mercuryRadiusScaleOfEarth = 0.5
+        const venusRadiusScaleOfEarth = 1
+
+        const earth = new THREE.Mesh(new THREE.SphereGeometry(earthRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_earth_daymap.jpg') }))
+        const moon = new THREE.Mesh(new THREE.SphereGeometry(moonRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/moonmap4k.jpg') }))
+        const sun = new THREE.Mesh(new THREE.SphereGeometry(sunRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_sun.jpg') }))
+        const mars = new THREE.Mesh(new THREE.SphereGeometry(marsRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_mars.jpg') }))
+        const neptune = new THREE.Mesh(new THREE.SphereGeometry(neptuneRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/2k_neptune.jpg') }))
+        const uranus = new THREE.Mesh(new THREE.SphereGeometry(uranusRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/2k_uranus.jpg') }))
+        const saturn = new THREE.Mesh(new THREE.SphereGeometry(saturnRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_saturn.jpg') }))
+        const jupiter = new THREE.Mesh(new THREE.SphereGeometry(jupiterRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_jupiter.jpg') }))
+        const mercury = new THREE.Mesh(new THREE.SphereGeometry(mercuryRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/8k_mercury.jpg') }))
+        const venus = new THREE.Mesh(new THREE.SphereGeometry(venusRadiusScaleOfEarth, 32, 16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./img/4k_venus_atmosphere.jpg') }))
+
+        scene.add(earth, sun, mars, neptune, uranus, saturn, jupiter, mercury, venus)
+
+        const myLogo = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
+        scene.add(myLogo)
+
+        //au = 149597871 km, factor from planet to sun
+        const au = 149597871
+        const sunDistanceFactor = 0
+        const mercuryDistanceFactor = 57900000 / au * 10 + sunRadiusScaleOfEarth
+        const venusDistanceFactor = 108200000 / au * 10 + sunRadiusScaleOfEarth
+        const earthDistanceFactor = 149600000 / au * 10 + sunRadiusScaleOfEarth
+        const marsDistanceFactor = 227900000 / au * 10 + sunRadiusScaleOfEarth
+        const jupiterDistanceFactor = 778600000 / au * 10 + sunRadiusScaleOfEarth
+        const saturnDistanceFactor = 1433500000 / au * 10 + sunRadiusScaleOfEarth
+        const uranusDistanceFactor = 2872500000 / au * 10 + sunRadiusScaleOfEarth
+        const neptuneDistanceFactor = 4495100000 / au * 10 + sunRadiusScaleOfEarth
+        const moonDistanceFactor = 0
+
+        const mercurySpeedFactor = 47.4
+        const venusSpeedFactor = 35
+        const earthSpeedFactor = 29.8
+        const marsSpeedFactor = 24.1
+        const jupiterSpeedFactor = 13.1
+        const saturnSpeedFactor = 9.7
+        const uranusSpeedFactor = 6.8
+        const neptuneSpeedFactor = 5.4
+        const moonSpeedFactor = 1
+
+        var clock = new THREE.Clock()
+
+        function time() {
+            const t = clock.getElapsedTime()
+
+            earth.position.x = earthDistanceFactor * Math.cos(t * earthSpeedFactor / 60)
+            earth.position.z = earthDistanceFactor * Math.sin(t * earthSpeedFactor / 60)
+
+            mercury.position.x = mercuryDistanceFactor * Math.cos(t * mercurySpeedFactor / 60)
+            mercury.position.z = mercuryDistanceFactor * Math.sin(t * mercurySpeedFactor / 60)
+
+            venus.position.x = venusDistanceFactor * Math.cos(t * venusSpeedFactor / 60)
+            venus.position.z = venusDistanceFactor * Math.sin(t * venusSpeedFactor / 60)
+
+            mars.position.x = marsDistanceFactor * Math.cos(t * marsSpeedFactor / 60)
+            mars.position.z = marsDistanceFactor * Math.sin(t * marsSpeedFactor / 60)
+
+            jupiter.position.x = jupiterDistanceFactor * Math.cos(t * jupiterSpeedFactor / 60)
+            jupiter.position.z = jupiterDistanceFactor * Math.sin(t * jupiterSpeedFactor / 60)
+
+            saturn.position.x = saturnDistanceFactor * Math.cos(t * saturnSpeedFactor / 60)
+            saturn.position.z = saturnDistanceFactor * Math.sin(t * saturnSpeedFactor / 60)
+
+            uranus.position.x = uranusDistanceFactor * Math.cos(t * uranusSpeedFactor / 60)
+            uranus.position.z = uranusDistanceFactor * Math.sin(t * uranusSpeedFactor / 60)
+
+            neptune.position.x = neptuneDistanceFactor * Math.cos(t * neptuneSpeedFactor / 60)
+            neptune.position.z = neptuneDistanceFactor * Math.sin(t * neptuneSpeedFactor / 60)
+
+            myLogo.position.x = marsDistanceFactor * Math.cos(t * marsSpeedFactor)
+            myLogo.position.z = marsDistanceFactor * Math.sin(t * marsSpeedFactor)
+
+            client.position.x = 15 * Math.cos(t)
+            client.position.z = 15 * Math.sin(t)
+
+        }
+
+        function addStar() {
+            const sphereGeometry = new THREE.SphereGeometry(0.2, 64, 32)
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+            const star = new THREE.Mesh(sphereGeometry, material)
+
+            const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(500))
+            star.position.set(x, y, z)
+            scene.add(star)
+        }
+
+        Array(200).fill().forEach(addStar)
+
+        const spaceTexture = new THREE.TextureLoader().load('./img/wp9133620-purple-space-4k-wallpapers.jpg')
+        scene.background = spaceTexture
+
+        function meshRotate() {
+            earth.rotation.y += 0.01
+            moon.rotation.y += 0.01
+            sun.rotation.y += 0.01
+            mars.rotation.y += 0.01
+            neptune.rotation.y += 0.01
+            uranus.rotation.y += 0.01
+            saturn.rotation.y += 0.01
+            jupiter.rotation.y += 0.01
+            mercury.rotation.y += 0.01
+            venus.rotation.y += 0.01
+        }
+
+        function moveCamera() {
+            const t = document.body.getBoundingClientRect().top
+
+            camera.position.x = client.position.x + 5
+            camera.position.y = client.position.y
+            camera.position.z = client.position.z
+
+        }
+
+        //animate
+        function animate() {
+            requestAnimationFrame(animate)
+            renderer.render(scene, camera)
+            controls.update()
+
+            meshRotate()
+            time()
+        }
+
+        animate()
+
+    </script>
+</body>
+
+</html>
